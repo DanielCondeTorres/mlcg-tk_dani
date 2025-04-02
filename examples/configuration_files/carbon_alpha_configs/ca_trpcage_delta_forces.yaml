@@ -1,0 +1,8 @@
+dataset_name: 1L2Y
+names: [1L2Y]
+tag: ""
+save_dir: ./demo_processed_data/
+prior_tag: ca_priors
+prior_fn: ./demo_processed_data/ca_priors_prior_model.pt
+batch_size: 10000
+device: cpu

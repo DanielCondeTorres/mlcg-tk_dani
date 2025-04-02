@@ -6,3 +6,4 @@ from .repulsion import (
 )
 from .dihedral import fit_dihedral_from_potential_estimates, dihedral
 from .histogram import HistogramsNL
+from .raw_angle import HarmonicRawAngle

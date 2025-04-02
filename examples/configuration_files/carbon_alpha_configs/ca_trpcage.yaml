@@ -1,0 +1,15 @@
+dataset_name: 1L2Y
+names: [1L2Y]
+sample_loader: input_generator.Trpcage_loader
+tag: ""
+raw_data_dir: ./demo_raw_data/
+save_dir:  ./demo_processed_data/
+pdb_template_fn:  ./demo_raw_data/structure.pdb
+cg_atoms:
+- CA
+embedding_map: input_generator.CGEmbeddingMapCA
+embedding_func: input_generator.embedding_ca
+skip_residues:
+- ACE
+- NME
+cg_mapping_strategy: slice_aggregate

@@ -125,7 +125,10 @@ def process_sim_input(
         data.neighbor_list = deepcopy(nls)
         data_list.append(data)
 
-    torch.save(data_list, f"{save_dir}{get_output_tag([dataset_name, tag], placement='before')}configurations.pt")
+    torch.save(
+        data_list,
+        f"{save_dir}{get_output_tag([dataset_name, tag], placement='before')}configurations.pt",
+    )
 
 
 if __name__ == "__main__":

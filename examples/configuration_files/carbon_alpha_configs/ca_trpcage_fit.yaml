@@ -1,0 +1,5 @@
+save_dir: ./demo_processed_data/
+prior_tag: ca_priors
+embedding_map: input_generator.CGEmbeddingMapCA
+temperature: 350
+

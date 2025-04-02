@@ -21,6 +21,7 @@ from time import ctime
 from typing import Dict, List, Union, Callable, Optional
 from jsonargparse import CLI
 
+
 def produce_delta_forces(
     dataset_name: str,
     names: List[str],
@@ -31,6 +32,7 @@ def produce_delta_forces(
     device: str,
     batch_size: int,
     force_tag: Optional[str] = None,
+    mol_num_batches: Optional[int] = 1,
 ):
     """
     Removes prior energy terms from input forces to produce delta force input
@@ -56,13 +58,18 @@ def produce_delta_forces(
         Number of frames to take per batch
     force_tag: str
         Optional tag to identify input for a particular run of delta force calculation
+    mol_num_batches : int
+        If greater than 1, will load each molecule data from the specified number of batches
+        that were be treated as different samples
     """
 
     prior_model = torch.load(open(prior_fn, "rb")).models.to(device)
-    dataset = RawDataset(dataset_name, names, tag)
+    dataset = RawDataset(dataset_name, names, tag, n_batches=mol_num_batches)
     for samples in tqdm(
         dataset, f"Processing delta forces for {dataset_name} dataset..."
     ):
+        if not samples.has_saved_cg_output(save_dir, prior_tag):
+            continue
         coords, forces, embeds, pdb, prior_nls = samples.load_cg_output(
             save_dir=save_dir, prior_tag=prior_tag
         )
@@ -93,10 +100,14 @@ def produce_delta_forces(
                 if j < len(sub_data_list):
                     delta_force = sub_data_list[j].forces.detach().cpu()
                     delta_forces.append(delta_force.numpy())
-        
-        fnout = os.path.join(save_dir, f"{get_output_tag([tag, samples.name, prior_tag, force_tag], placement='before')}delta_forces.npy")
+
+        fnout = os.path.join(
+            save_dir,
+            f"{get_output_tag([tag, samples.name, prior_tag, force_tag], placement='before')}delta_forces.npy",
+        )
         np.save(
-            fnout, np.concatenate(delta_forces, axis=0).reshape(*coords.shape),
+            fnout,
+            np.concatenate(delta_forces, axis=0).reshape(*coords.shape),
         )
 
 

@@ -55,6 +55,17 @@ class CGEmbeddingMapFiveBead(CGEmbeddingMap):
         super().__init__(embedding_map_fivebead)
 
 
+class CGEmbeddingMapCA(CGEmbeddingMap):
+    """
+    One-bead embedding map defined by:
+        - CA : backbone alpha carbon, carrying aminoacid identity
+    """
+
+    def __init__(self):
+        ca_dict = {key: emb for key, emb in embedding_map_fivebead.items() if emb <= 20}
+        super().__init__(ca_dict)
+
+
 all_residues = [
     "ALA",
     "CYS",
@@ -100,12 +111,23 @@ def embedding_fivebead(atom_df):
     return atom_type
 
 
-
+def embedding_ca(atom_df):
+    """
+    Helper function for mapping high-resolution topology to
+    CA embedding map.
+    """
+    name, res = atom_df["name"], atom_df["resName"]
+    if name == "CA":
+        atom_type = embedding_map_fivebead[res]
+    else:
+        print(f"Unknown atom name given: {name}")
+        atom_type = "NA"
+    return atom_type
 
 
 
 embedding_map_lipids_martini = {
-    "NC3":  1, #La cambio a NC3
+    "NC3":  1, 
     "PO4":  2,
     "GL1":  3,
     "GL2":  4,
@@ -117,8 +139,7 @@ embedding_map_lipids_martini = {
     "C2B":  10,
     "C3B":  11,
     "C4B":  12,
-    #Added for POPC
-    "D2A": 14
+    "D2A": 14,
 }
 
 

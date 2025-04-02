@@ -1,13 +1,32 @@
 from .raw_dataset import RawDataset, SampleCollection
 from .raw_data_loader import (
+    DatasetLoader,
     CATH_loader,
+    CATH_ext_loader,
     DIMER_loader,
+    DIMER_ext_loader,
+    Villin_loader,
     Trpcage_loader,
     Cln_loader,
+    BBA_loader,
+    ProteinG_loader,
+    A3D_loader,
     OPEP_loader,
+    NTL9_loader,
+    HDF5_loader,
 )
 
-from .embedding_maps import CGEmbeddingMap, CGEmbeddingMapFiveBead, embedding_fivebead, embedding_map_lipids_martini, CGEmbeddingMapLipidsMartini, embedding_lipids_martini
+
+from .embedding_maps import (
+    CGEmbeddingMap,
+    CGEmbeddingMapFiveBead,
+    CGEmbeddingMapCA,
+    embedding_fivebead,
+    embedding_ca, 
+    embedding_map_lipids_martini, 
+    CGEmbeddingMapLipidsMartini, 
+    embedding_lipids_martini
+)
 
 from .prior_nls import (
     StandardBonds,
@@ -18,6 +37,7 @@ from .prior_nls import (
     Omega,
     Gamma1,
     Gamma2,
+    CA_pseudo_dihedral,
 )
 
 from .prior_fit import fit_harmonic_from_potential_estimates, harmonic
@@ -25,6 +45,7 @@ from .prior_fit import (
     fit_repulsion_from_potential_estimates,
     fit_repulsion_from_values,
     repulsion,
+    HarmonicRawAngle,
 )
 from .prior_fit.fit_potentials import fit_potentials
 from .prior_fit import fit_dihedral_from_potential_estimates, dihedral

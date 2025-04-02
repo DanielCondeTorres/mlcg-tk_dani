@@ -1,0 +1,10 @@
+dataset_name: 1L2Y
+names: [1L2Y]
+tag: ""
+save_dir: ./demo_processed_data
+stride: 20
+batch_size: 5000
+device: cpu
+save_figs: true
+embedding_map: input_generator.CGEmbeddingMapCA
+

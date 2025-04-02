@@ -11,10 +11,13 @@ from mlcg.nn.prior import (
     GeneralBonds,
     GeneralAngles,
 )
+from .prior_fit import HarmonicRawAngle
+
 from mlcg.nn.gradients import GradientsOut
 
 from mlcg.data import AtomicData
 from .prior_fit.histogram import HistogramsNL
+
 
 
 class PriorBuilder:
@@ -85,7 +88,9 @@ class PriorBuilder:
             weights = data.weights
         else:
             weights = None
-        self.histograms.accumulate_statistics(nl_name, values, atom_types, mapping, weights)
+        self.histograms.accumulate_statistics(
+            nl_name, values, atom_types, mapping, weights
+        )
 
 
 class Bonds(PriorBuilder):
@@ -266,6 +271,58 @@ class Angles(PriorBuilder):
             At the moment only forces are implemented.
         """
         return GradientsOut(self.prior_cls(statistics, name=name), targets=targets)
+
+class RawAngles(Angles):
+    """
+    Builder for order-3 groups of angle priors.
+
+    Attributes
+    ----------
+    name:
+        Name of specific prior (to match neighbour list name)
+    nl_builder:
+        Neighbour list class to be used in building neighbour list
+    separate_termini:
+        Whether statistics should be computed separately for terminal atoms
+    nbins:
+        The number of bins over which 1-D feature histograms are constructed
+        in order to estimate distributions
+    bmin:
+        Lower bound of bin edges
+    bmax:
+        Upper bound of bin edges
+    prior_fit_fn:
+        Function to be used in fitting potential from statistics
+    """
+
+    def __init__(
+        self,
+        name: str,
+        nl_builder: Callable,
+        separate_termini: bool,
+        n_bins: int,
+        bmin: float,
+        bmax: float,
+        prior_fit_fn: Callable,
+    ) -> None:
+        super().__init__(
+            histograms=HistogramsNL(
+                n_bins=n_bins,
+                bmin=bmin,
+                bmax=bmax,
+            ),
+            nl_builder=nl_builder,
+            prior_fit_fn=prior_fit_fn,
+            prior_cls=HarmonicRawAngles,
+        )
+        self.name = name
+        self.type = "angles"
+        self.separate_termini = separate_termini
+        # if separate_termini == True then these will be set in get_terminal_atoms
+        self.n_term_atoms = None
+        self.c_term_atoms = None
+        self.n_atoms = None
+        self.c_atoms = None
 
 
 class NonBonded(PriorBuilder):
